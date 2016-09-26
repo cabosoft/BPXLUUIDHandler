@@ -99,22 +99,7 @@ static CFMutableDictionaryRef CreateKeychainQueryDictionary(void)
 
 + (NSString *)generateUUID
 {
-//#if TARGET_IPHONE_SIMULATOR
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-//	return [[UIDevice currentDevice] uniqueIdentifier];
-//#pragma clang diagnostic pop
-//#endif
-	CFUUIDRef uuidRef = CFUUIDCreate(NULL);
-	CFStringRef uuidStringRef = CFUUIDCreateString(NULL, uuidRef);
-	CFRelease(uuidRef);
-	NSString *uuid;
-	IF_ARC(
-		   uuid = objc_retainedObject(uuidStringRef);
-		   ,
-		   uuid = [(NSString *)uuidStringRef autorelease];
-		   )
-	return uuid;
+	return [[[NSUUID UUID] UUIDString] lowercaseString];
 }
 
 + (NSString *)storeUUID:(BOOL)itemExists
@@ -210,7 +195,7 @@ static NSString *_uuid = nil;
 	if (resultData != NULL) 
 	{
 		IF_ARC(
-			   _uuid = [[NSString alloc] initWithData:objc_retainedObject(resultData) encoding:NSUTF8StringEncoding];
+			   _uuid = [[NSString alloc] initWithData:(__bridge_transfer NSData *)resultData encoding:NSUTF8StringEncoding];
 			   ,
 			   _uuid = [[NSString alloc] initWithData:(NSData *)resultData encoding:NSUTF8StringEncoding];
 			   CFRelease(resultData);
